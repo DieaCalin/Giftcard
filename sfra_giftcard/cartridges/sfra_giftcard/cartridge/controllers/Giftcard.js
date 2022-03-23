@@ -6,8 +6,6 @@
  var URLUtils = require('dw/web/URLUtils');
  var csrfProtection = require('*/cartridge/scripts/middleware/csrf');
  var ProductMgr = require('dw/catalog/ProductMgr');
- var productHelper = require('*/cartridge/scripts/helpers/productHelpers');
-
 
  server.get(
    'Show',
@@ -79,7 +77,7 @@
       var quantityTotal = ProductLineItemsModel.getTotalQuantity(currentBasket.productLineItems);
       var cartModel = new CartModel(currentBasket);
       res.json({
-          cartLink: '<a href="' + URLUtils.https('Cart-Show') + '">' + Resource.msg('text.alert.viewcart', 'product', null) + '</a>',
+          cartLink: '<a href="' + URLUtils.https('Cart-Show') + '">' + '</a>',
           success: true,
           quantityTotal: quantityTotal,
           message: addToCartResult.message,

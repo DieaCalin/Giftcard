@@ -8,12 +8,13 @@ var base = module.superModule;
  * @param {dw.order.Basket} currentBasket - Current users's basket
  * @param {string} productId - the productId of the product being added to the cart
  * @param {number} quantity - the number of products to the cart
+ * @param {string} giftCardAmount - gift card amount to put on the card
  * @param {string} recipientEmail - gift card recipient email address
  * @param {Object} req - The local instance of the request object
  * @param {Object} giftCardJson - get giftCardJson object
  * @return {Object} returns an error object
  */
-function addGiftCardProductToCart(currentBasket, productId, quantity, req, giftCardJson) {
+function addGiftCardProductToCart(currentBasket, productId, quantity, giftCardAmount, req, giftCardJson) {
     var ProductMgr = require('dw/catalog/ProductMgr');
     var Resource = require('dw/web/Resource');
     var Transaction = require('dw/system/Transaction');
@@ -24,10 +25,10 @@ function addGiftCardProductToCart(currentBasket, productId, quantity, req, giftC
     var productHelper = require('*/cartridge/scripts/helpers/productHelpers');
     var optionModel = productHelper.getCurrentOptionModel(product.optionModel, null);
     var checkoutHelpers = require('*/cartridge/scripts/checkout/checkoutHelpers');
-    // var giftCardHelpers = require('*/cartridge/scripts/helpers/giftCardHelpers');
+    
     var result = {
         error: false,
-        message : 'added to cart'
+        message: Resource.msg('text.alert.giftdardaddedtobasket', 'giftcard', null)
     };
 ​
     var canBeAdded = false;
@@ -36,7 +37,7 @@ function addGiftCardProductToCart(currentBasket, productId, quantity, req, giftC
     canBeAdded = (perpetual || totalQtyRequested <= product.availabilityModel.inventoryRecord.ATS.value);
     if (!canBeAdded) {
         result.error = true;
-        result.message = 'error'
+        result.message = Resource.msgf('error.alert.selected.quantity.cannot.be.added.for', 'product', null, product.name);
         return result;
     }
 ​
@@ -44,13 +45,16 @@ function addGiftCardProductToCart(currentBasket, productId, quantity, req, giftC
     var childProducts = null;
     var shipment = defaultShipment;
 ​
-   
+    
     shipment = currentBasket.createShipment(UUIDUtils.createUUID());
 
+​
     productLineItem = base.addLineItem(
         currentBasket,
         product,
         quantity,
+        childProducts,
+        optionModel,
         shipment
     );
 ​
@@ -62,10 +66,11 @@ function addGiftCardProductToCart(currentBasket, productId, quantity, req, giftC
                 productLineItem.custom.senderName = giftCardJson.senderName;
                 productLineItem.custom.gcMessage = giftCardJson.gcMessage;
             }
+            //giftCardHelpers.setGiftCardAmount(productLineItem, giftCardAmount);
         });
     }
-
-    //result.uuid = productLineItem.UUID;
+​
+    result.uuid = productLineItem.UUID;
 ​
     return result;
 }
