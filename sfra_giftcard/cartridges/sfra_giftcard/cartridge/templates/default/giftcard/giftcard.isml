@@ -32,7 +32,7 @@
 						        <div class="invalid-feedback"></div>
 						    </div>
 						    <input type="hidden" name="${pdict.csrf.tokenName}" value="${pdict.csrf.token}"/>
-	   						<button type="submit" class="btn btn-block btn-primary">${Resource.msg('button.form.emailsignup', 'homePage', null)}</button>
+	   						<button type="submit" class="btn btn-block btn-primary">${Resource.msg('giftcard.button.buy', 'giftcard', null)}</button>
 						</form>    
 	            	</div>
 	            </div>
