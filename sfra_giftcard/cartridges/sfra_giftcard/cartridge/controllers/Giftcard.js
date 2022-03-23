@@ -64,8 +64,9 @@ server.post('Handler', function (req, res, next) {
   function addGiftcardToCart(currentBasket, productId, quantity) {
     var availableToSell;
     var defaultShipment = currentBasket.defaultShipment;
-    var perpetual;
-    var product = ProductMgr.getProduct(productId);
+    var perpetual = false;
+    var ProductMgr = require('dw/catalog/ProductMgr');
+    var product = ProductMgr.getProduct('123456');
     var productInCart;
     var productLineItems = currentBasket.productLineItems;
     var productQuantityInCart;
@@ -78,28 +79,9 @@ server.post('Handler', function (req, res, next) {
 
     var totalQtyRequested = 0;
     var canBeAdded = false;
+    totalQtyRequested = quantity;
+    perpetual = true;
 
-    if (product.bundle) {
-        canBeAdded = checkBundledProductCanBeAdded(childProducts, productLineItems, quantity);
-    } else {
-        totalQtyRequested = quantity;
-        perpetual = true;
-        canBeAdded =
-            (perpetual
-            || totalQtyRequested <= product.availabilityModel.inventoryRecord.ATS.value);
-    }
-
-    if (!canBeAdded) {
-        result.error = true;
-        result.message = Resource.msgf(
-            'error.alert.selected.quantity.cannot.be.added.for',
-            'product',
-            null,
-            product.availabilityModel.inventoryRecord.ATS.value,
-            product.name
-        );
-        return result;
-    }
 
         var productLineItem;
         productLineItem = addLineItem(
@@ -119,6 +101,7 @@ server.post('Handler', function (req, res, next) {
   if (currentBasket) {
       Transaction.wrap(function () {
           if (!req.form.pidsObj) {
+            quantity = 1;
               result = addGiftcardToCart(
                   currentBasket,
                   productId,
@@ -157,7 +140,7 @@ server.post('Handler', function (req, res, next) {
       });
   }
 
-  var quantityTotal = ProductLineItemsModel.getTotalQuantity(currentBasket.productLineItems);
+  var quantityTotal = 1;
   var cartModel = new CartModel(currentBasket);
 
   var urlObject = {
@@ -172,11 +155,10 @@ server.post('Handler', function (req, res, next) {
       reportingURL: reportingURL,
       quantityTotal: quantityTotal,
       message: result.message,
-      cart: cartModel,
 
       error: result.error,
       pliUUID: result.uuid,
-      minicartCountOfItems: Resource.msgf('minicart.count', 'common', null, quantityTotal)
+  
   });
 
   next();
