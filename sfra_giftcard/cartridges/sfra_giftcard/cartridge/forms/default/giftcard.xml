@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<form xmlns="http://www.demandware.com/xml/form/2008-04-19" secure="false">
+	<field 
+		formid="sender" 
+		label="label.input.sender.profile" 
+		mandatory="true" 
+		max-length="50" 
+		type="string" />
+
+	<field 
+		formid="recipient" 
+		label="label.input.recipient.profile" 
+		mandatory="true" 
+		max-length="50" 
+		type="string" />
+
+	<field
+		formid="message" 
+		label="label.input.message.profile" 
+		mandatory="false" 
+		max-length="50" 
+		type="string" />
+</form>
