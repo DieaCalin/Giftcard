@@ -13,7 +13,7 @@
       //var giftcardform = server.forms.getForm('giftcard');
     var actionUrl = URLUtils.url('Giftcard-Handler');
     var giftcardForm = server.forms.getForm('giftcard');
-    giftcardForm.clear();
+    // giftcardForm.clear();
     res.render('/giftcard/giftcard', {
       actionUrl: actionUrl,
       giftcardForm: giftcardForm
@@ -42,16 +42,18 @@
           });
           return next();
       }
-      var form = server.forms.getForm('giftcard');
+      
 
       //validate form !!!
+ 
+      var productId = 'gift-card-25';
 
-      var productId = '123456'
+      var giftcard = server.forms.getForm('giftcard');
       var quantity = 1;
       var addToCartResult;
-      var recipientName = 'Recipient'
-      var senderName = 'Sender'
-      var gcMessage = 'Have fun shopping'
+      var recipientName = giftcard.sender.value
+      var senderName = giftcard.recipient
+      var gcMessage = giftcard.message
       var giftCardJson;
 
       giftCardJson = {
@@ -76,19 +78,33 @@
       });
       var quantityTotal = ProductLineItemsModel.getTotalQuantity(currentBasket.productLineItems);
       var cartModel = new CartModel(currentBasket);
+      // res.render('/giftcard/giftcardsuccess', {
+      //   continueUrl:  dw.web.URLUtils.url('Giftcard-Success')
+      // })
       res.json({
+          myJson: giftCardJson,
           cartLink: '<a href="' + URLUtils.https('Cart-Show') + '">' + '</a>',
           success: true,
           quantityTotal: quantityTotal,
-          message: addToCartResult.message,
+          message: 'it works',
           cart: cartModel,
           error: addToCartResult.error,
-          pliUUID: addToCartResult.uuid
+          pliUUID: addToCartResult.uuid,
       });
-      return next();
+    next();
   }
 );
- 
+
+server.get(
+  'Success',
+  server.middleware.https,
+  function (req, res, next) {
+      res.render('/giftcard/giftcardsuccess', {
+          continueUrl: URLUtils.url('Giftcard-Success'),
+      });
+      next();
+  }
+);
 
  module.exports = server.exports();
 

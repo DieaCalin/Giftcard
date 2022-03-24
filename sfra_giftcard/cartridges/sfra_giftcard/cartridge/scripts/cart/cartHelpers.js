@@ -59,14 +59,17 @@ function addGiftCardProductToCart(currentBasket, productId, quantity, giftCardAm
     );
 ​
     // update EGC and PGC amounts
+    
     if (productLineItem) {
+
         Transaction.wrap(function () {
+
             if (!empty(giftCardJson)) { // eslint-disable-line no-undef
                 productLineItem.custom.recipientName = giftCardJson.recipientName;
                 productLineItem.custom.senderName = giftCardJson.senderName;
                 productLineItem.custom.gcMessage = giftCardJson.gcMessage;
             }
-            //giftCardHelpers.setGiftCardAmount(productLineItem, giftCardAmount);
+            
         });
     }
 ​
